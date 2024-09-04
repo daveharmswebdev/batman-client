@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router';
+import { RouterView } from 'vue-router';
+import NavBar from '@/components/NavBar.vue';
 </script>
 
 <template>
-  <nav>
-    <router-link to="/login">Login</router-link>
-  </nav>
-
+  <NavBar />
   <RouterView />
 </template>
