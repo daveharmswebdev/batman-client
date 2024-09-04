@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { jwtDecode } from 'jwt-decode';
+import axios from 'axios';
 
 export const useAuthStore = defineStore('auth', () => {
   const router = useRouter();
@@ -9,6 +10,7 @@ export const useAuthStore = defineStore('auth', () => {
   const token = ref<string | null>(localStorage.getItem('token'));
   const email = ref<string | null>(null);
   const username = ref<string | null>(null);
+  const loginError = ref<string>('');
 
   if (token.value) {
     try {
@@ -18,6 +20,30 @@ export const useAuthStore = defineStore('auth', () => {
       console.error('Error decoding token.', e);
     }
   }
+
+  const login = async (email: string, password: string) => {
+    try {
+      const response = await axios.post(
+        'http://localhost:3000/api/users/login',
+        {
+          email: email,
+          password: password,
+        }
+      );
+
+      const token = response.data.token;
+
+      setToken(token);
+
+      router.push('/');
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        loginError.value = 'Invalid Credentials. Please try again';
+      } else {
+        loginError.value = 'An error occurred. Please try again later';
+      }
+    }
+  };
 
   const setToken = (newToken: string | null) => {
     token.value = newToken;
@@ -55,7 +81,9 @@ export const useAuthStore = defineStore('auth', () => {
     username,
     setToken,
     clearToken,
+    login,
     logout,
+    loginError,
     isAuthenticated,
   };
 });
