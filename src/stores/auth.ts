@@ -8,6 +8,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const token = ref<string | null>(localStorage.getItem('token'));
   const email = ref<string | null>(null);
+  const username = ref<string | null>(null);
 
   if (token.value) {
     try {
@@ -26,6 +27,7 @@ export const useAuthStore = defineStore('auth', () => {
       try {
         const decoded = jwtDecode(newToken);
         email.value = decoded.email;
+        username.value = decoded.username;
       } catch (e) {
         console.error(e);
       }
@@ -50,6 +52,7 @@ export const useAuthStore = defineStore('auth', () => {
   return {
     token,
     email,
+    username,
     setToken,
     clearToken,
     logout,
