@@ -1,30 +1,28 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 
-const name = ref<string>('');
+const firstName = ref<string>('');
+const middleName = ref<string>('');
+const lastName = ref<string>('');
 const email = ref<string>('');
 const password = ref<string>('');
 const error = ref<string>('');
 
-const authStore = useAuthStore();
 const router = useRouter();
 
 const signUp = async () => {
   try {
-    const response = await axios.post('http://localhost:3000/api/users', {
-      name: name.value,
+    await axios.post('http://localhost:3000/api/users', {
+      firstName: firstName.value,
+      middleName: middleName.value,
+      lastName: lastName.value,
       password: password.value,
       email: email.value,
     });
 
-    const token = response.data.token;
-
-    authStore.setToken(token);
-
-    await router.push('/');
+    await router.push('/login');
   } catch (err: any) {
     error.value =
       err.response?.data?.message || 'Sign up failed. Please try again later.';
@@ -37,8 +35,16 @@ const signUp = async () => {
     <h2>Sign Up</h2>
     <form @submit.prevent="signUp">
       <div>
-        <label>Name:</label>
-        <input type="text" v-model="name" required />
+        <label>First Name:</label>
+        <input type="text" v-model="firstName" required />
+      </div>
+      <div>
+        <label>Middle Name:</label>
+        <input type="text" v-model="middleName" />
+      </div>
+      <div>
+        <label>Last Name:</label>
+        <input type="text" v-model="lastName" required />
       </div>
       <div>
         <label>Email:</label>
