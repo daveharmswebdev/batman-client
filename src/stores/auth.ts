@@ -11,11 +11,13 @@ export const useAuthStore = defineStore('auth', () => {
   const email = ref<string | null>(null);
   const username = ref<string | null>(null);
   const loginError = ref<string>('');
+  const role = ref<string | null>(null);
 
   if (token.value) {
     try {
       const decoded = jwtDecode(token.value);
       email.value = decoded.email;
+      role.value = decoded.role;
     } catch (e) {
       console.error('Error decoding token.', e);
     }
@@ -54,6 +56,7 @@ export const useAuthStore = defineStore('auth', () => {
         const decoded = jwtDecode(newToken);
         email.value = decoded.email;
         username.value = decoded.username;
+        role.value = decoded.role;
       } catch (e) {
         console.error(e);
       }
@@ -65,6 +68,7 @@ export const useAuthStore = defineStore('auth', () => {
   const clearToken = () => {
     token.value = null;
     email.value = null;
+    role.value = null;
     localStorage.removeItem('token');
   };
 
@@ -79,6 +83,7 @@ export const useAuthStore = defineStore('auth', () => {
     token,
     email,
     username,
+    role,
     setToken,
     clearToken,
     login,
